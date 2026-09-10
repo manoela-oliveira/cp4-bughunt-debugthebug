@@ -2,7 +2,9 @@ package br.com.fiap.streamfiap.model;
 
 import br.com.fiap.streamfiap.exception.ClassificacaoIndicativaException;
 import br.com.fiap.streamfiap.exception.CreditosInsuficientesException;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuarios")
@@ -19,7 +21,7 @@ public class Usuario {
     }
 
     public Usuario(String nome, int idade, double creditos) {
-        nome = nome;
+        this.nome = nome; // Correção: adicionando this
         this.idade = idade;
         this.creditos = creditos;
     }
