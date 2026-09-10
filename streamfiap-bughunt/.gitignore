@@ -1,0 +1,19 @@
+target/
+!.mvn/wrapper/maven-wrapper.properties
+
+### Eclipse ###
+.classpath
+.project
+.settings/
+bin/
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+out/
+
+### VS Code ###
+.vscode/
+
+### OS ###
+.DS_Store
