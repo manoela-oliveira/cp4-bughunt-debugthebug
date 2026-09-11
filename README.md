@@ -9,15 +9,15 @@
 
 | Integrante | RM | Turma |
 |---|---|---|
-| | | |
-| | | |
-| | | |
-| | | |
+|Manoela Oliveira Bello | RM563952 | 2CCPW |
+|Roberto Marques Moreira | RM564935 | 2CCPW |
+|Guilherme Ferraz de Medeiros | RM564743 | 2CCPW |
+
 
 | Campo | |
 |---|---|
-| **Total de bugs corrigidos** | ___ / 12 |
-| **Total de ajustes de Clean Code** | ___ / 6 |
+| **Total de bugs corrigidos** | 12 / 12 |
+| **Total de ajustes de Clean Code** | 6 / 6 |
 
 ---
 
