@@ -9,10 +9,12 @@
 
 | Integrante | RM | Turma |
 |---|---|---|
+|Felipe Rodrigues Ribeiro | RM565274 | 2CCPW |
+|Guilherme Ferraz de Medeiros | RM564743 | 2CCPW |
 |Manoela Oliveira Bello | RM563952 | 2CCPW |
 |Roberto Marques Moreira | RM564935 | 2CCPW |
-|Guilherme Ferraz de Medeiros | RM564743 | 2CCPW |
-|Felipe Rodrigues Ribeiro | RM565274 | 2CCPW |
+
+
 
 
 | Campo | |
@@ -49,7 +51,7 @@
 | clean01 | ConteudoController.java (buscarPorId) | Retorno muito verboso e redundante. | Simplifiquei o código para retornar direto o ResponseEntity.ok(conteudo). |
 | clean02 | ConteudoController.java (listarPorCategoria) | Má performance: o código puxava tudo do banco (findAll) para filtrar com um for na memória do Java. | Apaguei o loop e passei a usar a query direta do repositório (findByCategoria). |
 | clean03 | Conteudo.java e ConteudoController.java | Quebra do Encapsulamento: a variável duracaoMinutos estava pública e solta. | Mudei para private e passei a acessar via .getDuracaoMinutos() no controller. |
-| clean04 | Usuario.java (alugar) | No código tinha um bloco enorme de "System.out.println" simulando um recibo que uma API REST e não mostrava para o front-end. | Apagamos todos os prints, deixando só o que importa para a lógica de negócio. Melhoramos também o nome das variáveis c e p |
+| clean04 | Usuario.java (alugar) | No código tinha um bloco enorme de "System.out.println" simulando um recibo que uma API REST e não mostrava para o front-end. | Apagamos todos os prints, deixando só o que importa para a lógica de negócio |
 | clean05 | ConteudoController.java (final do arquivo) | Tinham muitas funções obsoletas com blocos inteiros de lógica comentados . | Apagamos tudo. O histórico do que foi feito fica no Git, não em código comentado |
 | clean06 | Usuario.java (debitarCreditos) | Comentário não verdadeiro sobre adicionar saldo em uma linha que estava fazendo subtração. | Deletamos o comentário que só servia para atrapalhar a leitura. |
 
@@ -57,50 +59,51 @@
 
 ## Parte 3 — Perguntas de reflexão
 
-> Responda com suas palavras, 5 a 10 linhas cada, **usando o código real do projeto
-> como exemplo**. Respostas genéricas de tutorial não pontuam.
-
 ### 1. Injeção de dependência (Aula 13)
-Os controllers recebem os repositories via `@Autowired` (ex.: `ConteudoController`
-usa `ConteudoRepository`). Explique por que o Spring precisa gerenciar esses objetos
-em vez de criarmos com `new ConteudoRepository()`. O que exatamente o Spring faz ao
-injetar um bean, e por que isso não funcionaria com um `new` comum?
+Pela regra geral uma interface não pode ser instanciada com um new, e o "ConteudoRepository" e uma interface, portanto nem sequer existe essa implementação.
+Por isso que na classe "AluguelController.java", o uso do @Autowired em cima do "ConteudoRepository" é obrigatório, praticamente delegamos para o container de Inversão de Controle (IoC) do Spring essa responsabilidade.
+O SpringData gera um proxy para que possamos implementar essa interface, acoplando a infraestrutura do Hibernate, EntityManager, conexões do DataSource e transações JDBC necessárias para conversar com o Oracle, registra esse objeto como Bean e precisa também configurar o acesso nele ao JPA do banco de dados.
+Se tentássemos instanciar manualmente, além do erro de compilação por se tratar de uma interface, perderíamos todo esse gerenciamento de sessões, segurança e performance que o Spring Boot entrega pronto.
 
 ### 2. JDBC vs Spring Data JPA (Aulas 12 e 13)
-Na Aula 12 escrevemos um `ProdutoDAO` na mão com `Connection`, `PreparedStatement` e
-`ResultSet`. Aqui o `ConteudoRepository` tem 2 linhas e faz CRUD completo. Compare as
-duas abordagens: o que o Spring Data JPA automatiza, o que o JDBC/DAO ainda resolve
-melhor, e como o `findByCategoria` consegue funcionar sem implementação.
+No JDBC da Aula 12, precisávamos fazer tudo na mão: abrir o Connection, montar o SQL, mapear o ResultSet linha por linha e fechar recursos. 
+Já no projeto StreamFIAP, o Spring Data JPA automatiza todo esse código repetitivo (boilerplate), bastando que o ConteudoRepository estenda JpaRepository<Conteudo, Long>. 
+O método findByCategoria funciona sem nenhuma implementação explícita graças ao Derived Query Methods: o Spring analisa o nome do método e gera dinamicamente a query no banco de dados baseada no atributo "categoria". 
+Apesar de tudo, o JDBC/DAO tradicional ainda se sai melhor em cenários específicos de altíssima performance, como batch inserts gigantes ou em consultas analíticas muito complexas, onde o mapeamento automático do Spring (ORM) poderia gerar um SQL lento.
 
 ### 3. Exceções checked vs unchecked (Aula 11)
-A `ClassificacaoIndicativaException` estourava como um erro genérico do servidor,
-sem mensagem útil para o cliente. Explique a diferença entre `extends Exception` e
-`extends RuntimeException` no contexto desse bug, e como você fez a mensagem da
-regra (classificação indicativa) chegar de forma clara ao cliente da API.
+A diferença é que classes que herdam de "Exception" são checadas, obrigando a quem estiver desenvolvendo usar try-catch ou declarar throws na assinatura do método (como ocorria em Usuario.alugar). 
+Já as que herdam de "RuntimeException" são não-checadas e sobem pelas camadas do sistema sem amarrar o compilador. 
+Antes, a exceção subia crua até o Spring Web, que a interpretava como uma falha fatal imprevista e gerava o erro genérico HTTP 500 (Internal Server Error). 
+Para resolver isso, alteramos a exceção para unchecked e criamos um tratador no GlobalExceptionHandler com a anotação @ExceptionHandler(ClassificacaoIndicativaException.class). 
+Com isso, o framework intercepta o evento e serializa um JSON amigável, entregando a mensagem da regra de negócio com o status correto de HTTP 403 (Forbidden).
 
 ### 4. Sobrescrita vs sobrecarga (Aula 7)
-Um dos bugs compilava sem nenhum erro: o método da `Serie` parecia sobrescrever
-`calcularPrecoAluguel`, mas na verdade sobrecarregava. Explique a diferença entre
-override e overload nesse caso e por que a anotação `@Override` teria impedido o bug.
+A sobrescrita (override) redefine um método da superclasse mantendo exatamente a mesma assinatura, enquanto a sobrecarga (overload) cria um método novo com o mesmo nome, mas parâmetros diferentes. 
+Em Serie, o método foi declarado como calcularPrecoAluguel(double desconto). Como a classe mãe Conteudo não recebia argumentos, o Java interpretou isso como um overload válido e o código compilou sem erros. 
+Porém, durante a chamada polimórfica no método Usuario.alugar(Conteudo c), a JVM ignorava a regra da série e executava a implementação da mãe, cobrando indevidamente R$ 9,90. 
+Corrigimos removendo o parâmetro e adicionando a anotação @Override para validar a alteração de comportamento. 
+Se o @Override estivesse lá desde o início, o compilador teria impedido esse bug silencioso imediatamente, alertando que não havia método com aquela assinatura na superclasse para ser sobrescrito.
 
 ### 5. Onde blindar o objeto? (Aulas 3, 4 e 13)
-Vimos bugs de dados inválidos aceitos (duração negativa, créditos negativos, campos
-nulos). Em quais lugares (construtor, setter, método do model) cada tipo de validação
-deve ficar? Justifique usando os bugs que você encontrou e explique por que validar só
-em um lugar não foi suficiente.
+A blindagem estrutural deve estar na camada de domínio para garantir que o objeto nunca assuma um estado corrompido. 
+O construtor garante um nascimento seguro aplicando o "Fail Fast", como fizemos ao impedir uma duração negativa em Conteudo e ao usar "super(...)" em Serie para evitar atributos nulos. 
+Os setters defendem o objeto de modificações posteriores inválidas. 
+Já as transições complexas pertencem aos métodos do model: a verificação de "c.isDisponivel()" e se o usuário tem saldo para o débito ocorrem exclusivamente dentro de "Usuario.alugar", pois dependem do contexto relacional da operação. 
+Validar apenas em um lugar, como no "Controller", é insuficiente porque espalha a regra de negócio para fora do domínio; se a classe for instanciada por um teste unitário ou por outro fluxo interno, ela nasceria completamente desprotegida.
 
 ### 6. Abstração e interface (Aulas 8 e 9)
-`Conteudo` é abstrata e `Promocionavel` é uma interface. Explique a diferença de
-propósito entre as duas nesse projeto e o que mudaria no código se o Documentário
-passasse a ter promoções — quais classes/linhas seriam tocadas e quais ficariam
-intactas? O que isso diz sobre o design do sistema?
+A classe abstrata "Conteudo" modela a identidade, ou seja, o que o objeto é, centralizando os atributos base da hierarquia (título, categoria, duração e a chave no banco). 
+Já a interface Promocionavel modela um comportamento, ou seja, o que o objeto faz, permitindo acoplar uma habilidade financeira apenas às classes que precisarem, sem engessar a herança. 
+Se a regra de negócio mudasse e o documentário aceitasse promoções, na alteração bastaria assinar o contrato colocando "implements Promocionavel" na classe "Documentario.java" e implementar o método "@Override public double aplicarPromocao(double preco)". 
+Todo o resto — as classes Conteudo, Filme, Serie e os controllers — permaneceria 100% intacto, pois a aplicação só verifica o contrato via instanceof. 
 
 ---
 
 ## Parte 4 — Espaço livre (opcional)
+- Identificamos na aba Usuario.java um possível 7° Clean Clode, porque tivemos que melhorar também o nome das variáveis "c" e "p". Trocamos o "c" por "conteudo" e o "p" por "precoAluguel". Desta forma facilita a leitura e compreensão do código.
 
-Alguma dificuldade, dúvida ou comentário sobre o checkpoint?
+  Todas as CPs da disciplina de POO são desafiadoras, sempre depois que finalizo toda a leitura do pdf parece que é uma tarefa impossível, por isso como regra para qualquer CP de POO temos que por obrigatoriedade revisar todas as aulas e conceitos já vistos, isso me ajuda muito a rever conceitos já esquecidos e traz uma sensação de dever cumprido quando conseguimos finalizar toda tarefa.
 
-```
 
-```
+
