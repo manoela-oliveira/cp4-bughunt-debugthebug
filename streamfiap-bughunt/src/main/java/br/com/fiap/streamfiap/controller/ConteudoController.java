@@ -33,7 +33,6 @@ public class ConteudoController {
 
     // GET /api/conteudos/{id} - Buscar por ID
     @GetMapping("/{id}")
-    // Correção: removendo try-catch que engolia a excecao e ajustando retorno conforme padrão Spring
     public ResponseEntity<Conteudo> buscarPorId(@PathVariable Long id) {
         Conteudo conteudo = conteudoRepository.findById(id)
                 .orElseThrow(() -> new ConteudoNaoEncontradoException("Conteúdo não encontrado: " + id));
@@ -43,7 +42,7 @@ public class ConteudoController {
     // GET /api/conteudos/categoria/{categoria} - Buscar por categoria
     @GetMapping("/categoria/{categoria}")
     public List<Conteudo> listarPorCategoria(@PathVariable String categoria) {
-        return conteudoRepository.findByCategoria(categoria); // Correção: utilizando método já existente para otimização
+        return conteudoRepository.findByCategoria(categoria);
     }
 
     // GET /api/conteudos/{id}/preco-promocional - Preço com promoção
@@ -53,8 +52,6 @@ public class ConteudoController {
                 .orElseThrow(() -> new ConteudoNaoEncontradoException("Conteúdo não encontrado: " + id));
         return conteudo.calcularPrecoPromocional();
     }
-
-    // Correção: utilizando getter para respeitar e possibilitar o uso correto de encapsulamento -> getDuracaoMinutos()
 
     // POST /api/conteudos/filme - cadastra um filme (cria nova instância sem o id vindo do cliente)
     @PostMapping("/filme")
@@ -81,5 +78,4 @@ public class ConteudoController {
         return ResponseEntity.status(201).body(conteudoRepository.save(novo));
     }
 
-    // Correção: removendo comentários desnecessários e métodos obsoletos
 }

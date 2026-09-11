@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Correção: garantindo geração automática
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nome;
@@ -25,22 +25,20 @@ public class Usuario {
     }
 
     public Usuario(String nome, int idade, double creditos) {
-        this.nome = nome; // Correção: adicionando this
+        this.nome = nome;
         this.idade = idade;
         this.creditos = creditos;
     }
 
     public boolean temCreditosSuficientes(double preco) {
-        return this.creditos >= preco; // Correção: ajustando lógica - credito maior ou igual a preço e não ao contrário
+        return this.creditos >= preco;
     }
 
     public void debitarCreditos(double valor) {
-        // Correção: removendo comentário incorreto
         this.creditos = this.creditos - valor;
     }
 
     public Usuario alugar(Conteudo c) throws ClassificacaoIndicativaException {
-        // Correção: adicionando validação de disponibilidade antes de cobrar o usuário
         if (!c.isDisponivel()) {
             throw new ConteudoIndisponivelException("O conteúdo " + c.getTitulo() + " não está disponível para aluguel.");
         }
@@ -59,8 +57,6 @@ public class Usuario {
 
         debitarCreditos(p);
         c.setDisponivel(false);
-
-        // Correção: removendo bloco "RECIBO STREAMFIAP" para otimização -> se não vai ser visualizado pelo cliente, não há necessidade de existir
 
         return this;
     }
