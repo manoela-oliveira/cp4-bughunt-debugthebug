@@ -26,6 +26,11 @@ public abstract class Conteudo {
     }
 
     protected Conteudo(String titulo, String categoria, int duracaoMinutos, int classificacaoEtaria, boolean disponivel) {
+        // Correção: adicionando validação direto no construtor a fim de seguir o princípio de Fail Fast
+        if (duracaoMinutos <= 0) {
+            throw new IllegalArgumentException("A duração em minutos deve ser maior que zero.");
+        }
+
         this.titulo = titulo;
         this.categoria = categoria;
         this.duracaoMinutos = duracaoMinutos;
