@@ -1,6 +1,5 @@
 package br.com.fiap.streamfiap.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +43,7 @@ public class ConteudoController {
     // GET /api/conteudos/categoria/{categoria} - Buscar por categoria
     @GetMapping("/categoria/{categoria}")
     public List<Conteudo> listarPorCategoria(@PathVariable String categoria) {
-        List<Conteudo> resultado = new ArrayList<>();
-        for (Conteudo c : conteudoRepository.findAll()) {
-            if (c.getCategoria().equals(categoria)) { // Correção: ajustando modo de comparação, de == para .equals()
-                resultado.add(c);
-            }
-        }
-        return resultado;
+        return conteudoRepository.findByCategoria(categoria); // Correção: utilizando método já existente para otimização
     }
 
     // GET /api/conteudos/{id}/preco-promocional - Preço com promoção
