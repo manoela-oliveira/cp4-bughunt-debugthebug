@@ -1,6 +1,10 @@
 package br.com.fiap.streamfiap.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "conteudos")
@@ -13,7 +17,7 @@ public abstract class Conteudo {
     private String titulo;
     private String categoria;
 
-    public int duracaoMinutos;
+    private  int duracaoMinutos; // Correção: aplicando regras de encapsulamento
 
     private int classificacaoEtaria;
     private boolean disponivel;
