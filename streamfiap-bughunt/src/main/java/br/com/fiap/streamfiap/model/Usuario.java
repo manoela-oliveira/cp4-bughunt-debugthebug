@@ -30,7 +30,7 @@ public class Usuario {
     }
 
     public boolean temCreditosSuficientes(double preco) {
-        return preco >= this.creditos;
+        return this.creditos >= preco; // Correção: ajustando lógica - credito maior ou igual a preço e não ao contrário
     }
 
     public void debitarCreditos(double valor) {
