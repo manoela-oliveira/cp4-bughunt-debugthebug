@@ -1,11 +1,11 @@
 # Checkpoint 4 — Bug Hunt StreamFIAP
 
-> Copie este arquivo para a raiz do seu repositório com o nome **README.md**
-> e preencha todas as seções.
+> **Professor:** Ygor Moraes Martins dos Anjos
+---
 
 ## Identificação
 
-**Grupo:** ___
+**Grupo:** debugthebug
 
 | Integrante | RM | Turma |
 |---|---|---|
