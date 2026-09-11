@@ -1,6 +1,7 @@
 package br.com.fiap.streamfiap.model;
 
 import br.com.fiap.streamfiap.exception.ClassificacaoIndicativaException;
+import br.com.fiap.streamfiap.exception.ConteudoIndisponivelException;
 import br.com.fiap.streamfiap.exception.CreditosInsuficientesException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,6 +40,11 @@ public class Usuario {
     }
 
     public Usuario alugar(Conteudo c) throws ClassificacaoIndicativaException {
+        // Correção: adicionando validação de disponibilidade antes de cobrar o usuário
+        if (!c.isDisponivel()) {
+            throw new ConteudoIndisponivelException("O conteúdo " + c.getTitulo() + " não está disponível para aluguel.");
+        }
+
         if (this.idade < c.getClassificacaoEtaria()) {
             throw new ClassificacaoIndicativaException("Usuário de " + this.idade
                     + " anos não pode assistir a " + c.getTitulo()
