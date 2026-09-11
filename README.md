@@ -12,6 +12,7 @@
 |Manoela Oliveira Bello | RM563952 | 2CCPW |
 |Roberto Marques Moreira | RM564935 | 2CCPW |
 |Guilherme Ferraz de Medeiros | RM564743 | 2CCPW |
+|Felipe Rodrigues Ribeiro | RM565274 | 2CCPW |
 
 
 | Campo | |
