@@ -14,6 +14,11 @@ public class Documentario extends Conteudo {
         super(titulo, categoria, duracaoMinutos, classificacaoEtaria, disponivel);
         this.tema = tema;
     }
+    
+    @Override
+    public double calcularPrecoAluguel() {
+        return 0.0;
+    }
 
     public String getTema() { return tema; }
     public void setTema(String tema) { this.tema = tema; }

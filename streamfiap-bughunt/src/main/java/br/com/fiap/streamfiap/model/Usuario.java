@@ -38,25 +38,25 @@ public class Usuario {
         this.creditos = this.creditos - valor;
     }
 
-    public Usuario alugar(Conteudo c) throws ClassificacaoIndicativaException {
-        if (!c.isDisponivel()) {
-            throw new ConteudoIndisponivelException("O conteúdo " + c.getTitulo() + " não está disponível para aluguel.");
+    public Usuario alugar(Conteudo conteudo) throws ClassificacaoIndicativaException {
+        if (!conteudo.isDisponivel()) {
+            throw new ConteudoIndisponivelException("O conteúdo " + conteudo.getTitulo() + " não está disponível para aluguel.");
         }
 
-        if (this.idade < c.getClassificacaoEtaria()) {
+        if (this.idade < conteudo.getClassificacaoEtaria()) {
             throw new ClassificacaoIndicativaException("Usuário de " + this.idade
-                    + " anos não pode assistir a " + c.getTitulo()
-                    + " (classificação " + c.getClassificacaoEtaria() + " anos)");
+                    + " anos não pode assistir a " + conteudo.getTitulo()
+                    + " (classificação " + conteudo.getClassificacaoEtaria() + " anos)");
         }
 
-        double p = c.calcularPrecoAluguel();
+        double precoAluguel = conteudo.calcularPrecoAluguel();
 
-        if (!temCreditosSuficientes(p)) {
-            throw new CreditosInsuficientesException("Créditos insuficientes para alugar " + c.getTitulo());
+        if (!temCreditosSuficientes(precoAluguel)) {
+            throw new CreditosInsuficientesException("Créditos insuficientes para alugar " + conteudo.getTitulo());
         }
 
-        debitarCreditos(p);
-        c.setDisponivel(false);
+        debitarCreditos(precoAluguel);
+        conteudo.setDisponivel(false);
 
         return this;
     }
