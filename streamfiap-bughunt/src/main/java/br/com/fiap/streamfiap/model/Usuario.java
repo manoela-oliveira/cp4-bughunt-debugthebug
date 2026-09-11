@@ -35,7 +35,7 @@ public class Usuario {
     }
 
     public void debitarCreditos(double valor) {
-        // adiciona o valor aos créditos do usuário
+        // Correção: removendo comentário incorreto
         this.creditos = this.creditos - valor;
     }
 
