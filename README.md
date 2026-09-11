@@ -103,7 +103,7 @@ Todo o resto — as classes Conteudo, Filme, Serie e os controllers — permanec
 ## Parte 4 — Espaço livre (opcional)
 - Identificamos na aba Usuario.java um possível 7° Clean Clode, porque tivemos que melhorar também o nome das variáveis "c" e "p". Trocamos o "c" por "conteudo" e o "p" por "precoAluguel". Desta forma facilita a leitura e compreensão do código.
 
-  Todas as CPs da disciplina de POO são desafiadoras, sempre depois que finalizo toda a leitura do pdf parece que é uma tarefa impossível, por isso como regra para qualquer CP de POO temos que por obrigatoriedade revisar todas as aulas e conceitos já vistos, isso me ajuda muito a rever conceitos já esquecidos e traz uma sensação de dever cumprido quando conseguimos finalizar toda tarefa.
+- Todas as CPs da disciplina de POO são desafiadoras, sempre depois que finalizo toda a leitura do pdf parece que é uma tarefa impossível, por isso como regra para qualquer CP de POO temos que por obrigatoriedade revisar todas as aulas e conceitos já vistos, isso me ajuda muito a rever conceitos já esquecidos e ajuda bastante na caça aos bugs e clean code, e quando finalizamos traz uma sensação de dever realizado.
 
 
 
