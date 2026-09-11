@@ -28,29 +28,29 @@
 
 | # | Sintoma observado (o que fiz/vi) | Causa raiz (arquivo e linha aproximada) | Correção aplicada | Conceito da disciplina |
 |---|---|---|---|---|
-| bug01 | | | | |
-| bug02 | | | | |
-| bug03 | | | | |
-| bug04 | | | | |
-| bug05 | | | | |
-| bug06 | | | | |
-| bug07 | | | | |
-| bug08 | | | | |
-| bug09 | | | | |
-| bug10 | | | | |
-| bug11 | | | | |
-| bug12 | | | | |
+| bug01 | Cadastro de usuário não gerava ID automaticamente no banco. | Usuario.java: Faltou configurar o autoincremento no atributo id. | Adicionada a anotação @GeneratedValue(strategy = GenerationType.IDENTITY). | JPA / Mapeamento Banco-Objeto |
+| bug02 | O nome do usuário ficava null no banco de dados. | Usuario.java: O construtor estava salvando a variável nela mesma (nome = nome) em vez de no atributo da classe. | Colocado o ponteiro this para referenciar o atributo: this.nome = nome;. | POO (Escopo e uso do this) |
+| bug03 | Buscar um ID que não existe retornava tela em branco (HTTP 200) em vez de erro 404. | ConteudoController.java: Tinha um bloco try-catch vazio engolindo o erro. | Apaguei o try-catch para a exceção subir corretamente para o GlobalExceptionHandler. | Tratamento de Exceções REST |
+| bug04 | A busca por categoria (ex: FICCAO) não trazia nada. | ConteudoController.java: Estava comparando String com == em vez de usar .equals(), além de fazer o filtro na mão. | Substituído pelo método automático findByCategoria do Spring Data. | POO (Comparação de Strings) / Spring Data |
+| bug05 | O preço promocional estava cobrando 20% a mais, e não a menos. | Filme.java: A matemática estava multiplicando o preço por 1.2. | Alterado para preco * 0.8 (aplicando o desconto de 20%). | Lógica de Negócio |
+| bug06 | Séries eram salvas sem título e duração no banco. | Serie.java: O construtor não passava os parâmetros obrigatórios para a classe mãe (Conteudo). | Inserido super(...) repassando todos os dados básicos. | POO (Herança e Construtores) |
+| bug07 | Aluguel de série cobrava o valor fixo de R$ 9,90 igual ao filme. | Serie.java: O método de preço estava com um parâmetro extra (sobrecarga), então o Java ignorava ele e usava o da classe mãe. | Removido o parâmetro e adicionada a anotação @Override. | POO (Polimorfismo / Sobrescrita) |
+| bug08 | Documentário estava cobrando R$ 9,90 em vez de ser gratuito. | Documentario.java: Faltou sobrescrever a regra de preço herdada. | Criado o método com @Override retornando 0.0. | POO (Polimorfismo / Especialização) |
+| bug09 | Permitia alugar sem saldo e barrava quem tinha limite. | Usuario.java: A lógica do if estava invertida (preco >= creditos). | Corrigida a lógica para this.creditos >= preco. | Lógica Condicional / Operadores |
+| bug10 | Sistema permitia alugar um filme que já constava como indisponível. | Usuario.java: O método cobrava o usuário antes de checar se o título estava livre. | Inserida a validação if (!conteudo.isDisponivel()) lançando exceção. | Regras de Negócio (Fail-Fast) |
+| bug11 | Usuário menor de idade tomava erro 500 genérico no servidor. | GlobalExceptionHandler.java: O sistema não sabia o que fazer com a ClassificacaoIndicativaException. | Criado o @ExceptionHandler retornando o status HTTP 403 (Forbidden). | Spring Boot / ControllerAdvice |
+| bug12 | Dava para cadastrar filmes com duração negativa (-10 min). | Conteudo.java: Faltou checar os dados recebidos antes de instanciar o objeto. | Inserido um if no construtor barrando valor zero ou negativo. | Validação de Dados / Defesa de Domínio |
 
 ## Parte 2 — Ajustes de Clean Code
 
 | # | Onde estava | Qual princípio/boas práticas era violado | O que eu mudei |
 |---|---|---|---|
-| clean01 | | | |
-| clean02 | | | |
-| clean03 | | | |
-| clean04 | | | |
-| clean05 | | | |
-| clean06 | | | |
+| clean01 | ConteudoController.java (buscarPorId) | Retorno muito verboso e redundante. | Simplifiquei o código para retornar direto o ResponseEntity.ok(conteudo). |
+| clean02 | ConteudoController.java (listarPorCategoria) | Má performance: o código puxava tudo do banco (findAll) para filtrar com um for na memória do Java. | Apaguei o loop e passei a usar a query direta do repositório (findByCategoria). |
+| clean03 | Conteudo.java e ConteudoController.java | Quebra de Encapsulamento: a variável duracaoMinutos estava pública e solta. | Mudei para private e passei a acessar via .getDuracaoMinutos() no controller. |
+| clean04 | Usuario.java (alugar) | Código inútil: um bloco enorme de System.out.println simulando um recibo que uma API REST nunca mostra para o front-end. | Apaguei todos os prints, deixando só o que importa para a lógica de negócio. |
+| clean05 | ConteudoController.java (final do arquivo) | Código zumbi: funções velhas e blocos inteiros de lógica comentados. | Apaguei tudo. O histórico do que foi feito fica no Git, não em código comentado. |
+| clean06 | Usuario.java (debitarCreditos) | Comentário mentiroso dizendo que adicionava saldo em uma linha que estava fazendo subtração. | Deletei o comentário que só servia para atrapalhar a leitura. |
 
 ---
 
