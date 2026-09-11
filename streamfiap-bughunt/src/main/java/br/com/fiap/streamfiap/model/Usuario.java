@@ -60,14 +60,7 @@ public class Usuario {
         debitarCreditos(p);
         c.setDisponivel(false);
 
-        System.out.println("==================================================");
-        System.out.println("RECIBO STREAMFIAP");
-        System.out.println("Usuario: " + this.nome);
-        System.out.println("Conteudo: " + c.getTitulo());
-        System.out.println("Valor pago: R$ " + p);
-        System.out.println("Creditos restantes: R$ " + this.creditos);
-        System.out.println("Obrigado por usar o StreamFIAP!");
-        System.out.println("==================================================");
+        // Correção: removendo bloco "RECIBO STREAMFIAP" para otimização -> se não vai ser visualizado pelo cliente, não há necessidade de existir
 
         return this;
     }
