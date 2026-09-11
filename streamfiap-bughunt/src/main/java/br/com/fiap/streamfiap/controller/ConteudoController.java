@@ -34,10 +34,11 @@ public class ConteudoController {
 
     // GET /api/conteudos/{id} - Buscar por ID
     @GetMapping("/{id}")
-    public Conteudo buscarPorId(@PathVariable Long id) {
-            Conteudo conteudo = conteudoRepository.findById(id)
-                    .orElseThrow(() -> new ConteudoNaoEncontradoException("Conteúdo não encontrado: " + id));
-            return ResponseEntity.ok(conteudo).getBody();
+    // Correção: removendo try-catch que engolia a excecao e ajustando retorno conforme padrão Spring
+    public ResponseEntity<Conteudo> buscarPorId(@PathVariable Long id) {
+        Conteudo conteudo = conteudoRepository.findById(id)
+                .orElseThrow(() -> new ConteudoNaoEncontradoException("Conteúdo não encontrado: " + id));
+        return ResponseEntity.ok(conteudo);
     }
 
     // GET /api/conteudos/categoria/{categoria} - Buscar por categoria
